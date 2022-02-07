@@ -86,548 +86,179 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/img/background0.png":
-/*!*********************************!*\
-  !*** ./src/img/background0.png ***!
-  \*********************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = (__webpack_require__.p + "8a7902363171f60746b18fe905732af5.png");
-
-/***/ }),
-
-/***/ "./src/img/hero_left.png":
-/*!*******************************!*\
-  !*** ./src/img/hero_left.png ***!
-  \*******************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = (__webpack_require__.p + "fbb33d5aee3c5d03c8b833543bcc7dc9.png");
-
-/***/ }),
-
-/***/ "./src/img/hero_rigth.png":
-/*!********************************!*\
-  !*** ./src/img/hero_rigth.png ***!
-  \********************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = (__webpack_require__.p + "ec62c4751b3102633f18526ce80280fa.png");
-
-/***/ }),
-
-/***/ "./src/img/platform.png":
-/*!******************************!*\
-  !*** ./src/img/platform.png ***!
-  \******************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = (__webpack_require__.p + "10a205d414a8922fa719c575d1b8a93c.png");
-
-/***/ }),
-
-/***/ "./src/img/tree.png":
-/*!**************************!*\
-  !*** ./src/img/tree.png ***!
-  \**************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = (__webpack_require__.p + "837cda671accc09ac154574324727fbe.png");
-
-/***/ }),
-
 /***/ "./src/js/canvas.js":
 /*!**************************!*\
   !*** ./src/js/canvas.js ***!
   \**************************/
-/*! no exports provided */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _img_platform_png__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../img/platform.png */ "./src/img/platform.png");
-/* harmony import */ var _img_background0_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../img/background0.png */ "./src/img/background0.png");
-/* harmony import */ var _img_tree_png__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../img/tree.png */ "./src/img/tree.png");
-/* harmony import */ var _img_hero_rigth_png__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../img/hero_rigth.png */ "./src/img/hero_rigth.png");
-/* harmony import */ var _img_hero_left_png__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../img/hero_left.png */ "./src/img/hero_left.png");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
-
-
-
-
-
-console.log(_img_platform_png__WEBPACK_IMPORTED_MODULE_0__["default"]);
 var game = document.querySelector(".game__area");
 var root = game.getContext("2d");
-var score = document.querySelector(".score");
-game.width = 1024; //window.innerWidth
+game.width = 600; //window.innerWidth
 
-game.height = 576; //window.innerHeight
+game.height = window.innerHeight - 10; //window.innerHeight
 
-var gravite = .6;
+var gravity = 1.5;
 
-var Hero = /*#__PURE__*/function () {
-  function Hero() {
-    _classCallCheck(this, Hero);
+var Bird = /*#__PURE__*/function () {
+  function Bird() {
+    _classCallCheck(this, Bird);
 
     this.position = {
-      x: 200,
-      y: 300
+      x: game.width / 2,
+      y: game.height / 2
     };
     this.size = {
-      width: 38,
-      height: 72
+      radius: 12
     };
     this.velocity = {
       x: 0,
-      y: 1
+      y: 3
     };
     this.jump = {
-      count: 0,
-      length: 12,
-      height: 0
+      height: 0,
+      length: 7,
+      count: 0
     };
-    this.speed = 5;
-    this.frame = 0;
-    this.slowFrame = 0;
-    this.sprite = {
-      stand: {
-        right: {
-          image: createImage(_img_hero_rigth_png__WEBPACK_IMPORTED_MODULE_3__["default"]),
-          x: 14,
-          y: 0,
-          width: 19,
-          height: 36,
-          slowFrame: 8,
-          quantity: 3
-        },
-        left: {
-          image: createImage(_img_hero_left_png__WEBPACK_IMPORTED_MODULE_4__["default"]),
-          x: 172,
-          y: 0,
-          width: 19,
-          height: 36,
-          slowFrame: 8,
-          quantity: 3
-        }
-      },
-      jump: {
-        right: {
-          image: createImage(_img_hero_rigth_png__WEBPACK_IMPORTED_MODULE_3__["default"]),
-          y: 75,
-          x: 14,
-          width: 19,
-          height: 36,
-          slowFrame: 4,
-          quantity: 3
-        },
-        left: {
-          image: createImage(_img_hero_left_png__WEBPACK_IMPORTED_MODULE_4__["default"]),
-          x: 14,
-          y: 75,
-          width: 19,
-          height: 36,
-          slowFrame: 4,
-          quantity: 3
-        }
-      },
-      run: {
-        right: {
-          image: createImage(_img_hero_rigth_png__WEBPACK_IMPORTED_MODULE_3__["default"]),
-          x: 67,
-          y: 37,
-          width: 23,
-          height: 38,
-          slowFrame: 2,
-          quantity: 3
-        },
-        left: {
-          image: createImage(_img_hero_left_png__WEBPACK_IMPORTED_MODULE_4__["default"]),
-          x: 19,
-          y: 37,
-          width: 19,
-          height: 38,
-          slowFrame: 2,
-          quantity: 3
-        }
-      }
-    };
-    this.currentSprite = this.sprite.stand.right;
   }
 
-  _createClass(Hero, [{
+  _createClass(Bird, [{
     key: "draw",
     value: function draw() {
-      root.drawImage(this.currentSprite.image, this.currentSprite.x + 50 * this.frame, this.currentSprite.y, this.currentSprite.width, this.currentSprite.height, this.position.x, this.position.y, this.size.width, this.size.height);
+      root.beginPath();
+      root.arc(this.position.x, this.position.y, this.size.radius, 0, Math.PI * 2, false);
+      root.fillStyle = 'yellow';
+      root.fill();
+      root.closePath();
     }
   }, {
     key: "update",
     value: function update() {
-      this.slowFrame++;
-
-      if (this.slowFrame > this.currentSprite.slowFrame * this.frame) {
-        this.frame++;
-        if (this.frame > this.currentSprite.quantity) this.frame = 0;
-        this.slowFrame = 0;
-      }
-
       this.draw();
-      this.position.y += this.velocity.y - this.jump.height;
-      this.position.x += this.velocity.x;
-      this.collisionDown();
+      this.position.y += Math.floor(this.velocity.y + gravity) - this.jump.height;
+      this.jumpBird();
+      this.collisionWall();
     }
   }, {
-    key: "collisionDown",
-    value: function collisionDown() {
-      if (game.height >= this.position.y + this.size.height + this.velocity.y) this.velocity.y += gravite;
+    key: "collisionWall",
+    value: function collisionWall() {
+      if (this.position.y + this.size.radius > game.height) {
+        this.position.y = game.height / 2;
+      }
+
+      if (this.position.y - this.size.radius < 0) {
+        this.position.y = game.height / 2;
+      }
+    }
+  }, {
+    key: "jumpBird",
+    value: function jumpBird() {
+      if (keys.space.pressed) {
+        this.jump.count++;
+        this.jump.height = 2 * this.jump.length * Math.sin(Math.PI * this.jump.count / this.jump.length);
+      }
+
+      if (this.jump.count > this.jump.length) {
+        this.jump.count = 0;
+        this.jump.height = 0;
+        keys.space.pressed = false;
+      }
     }
   }]);
 
-  return Hero;
+  return Bird;
 }();
 
 ;
 
-var Platform = /*#__PURE__*/function () {
-  function Platform(_ref) {
-    var x = _ref.x,
-        y = _ref.y,
-        width = _ref.width,
-        height = _ref.height,
-        image = _ref.image;
-
-    _classCallCheck(this, Platform);
+var Pipe = /*#__PURE__*/function () {
+  function Pipe(x, y) {
+    _classCallCheck(this, Pipe);
 
     this.position = {
       x: x,
       y: y
     };
     this.size = {
-      width: width,
-      height: height
-    };
-    this.image = image;
-  }
-
-  _createClass(Platform, [{
-    key: "draw",
-    value: function draw() {
-      root.drawImage(this.image, this.position.x, this.position.y, this.size.width, this.size.height);
-    }
-  }]);
-
-  return Platform;
-}();
-
-;
-
-var GenericObject = /*#__PURE__*/function () {
-  function GenericObject(_ref2) {
-    var x = _ref2.x,
-        _ref2$changePerSent = _ref2.changePerSent,
-        changePerSent = _ref2$changePerSent === void 0 ? 1 : _ref2$changePerSent,
-        y = _ref2.y,
-        image = _ref2.image;
-
-    _classCallCheck(this, GenericObject);
-
-    this.position = {
-      x: x,
-      y: y
-    };
-    this.changePerSent = changePerSent;
-    this.image = image;
-    this.size = {
-      width: image.width / this.changePerSent,
-      height: image.height / this.changePerSent
+      width: 60,
+      height: 700
     };
   }
 
-  _createClass(GenericObject, [{
+  _createClass(Pipe, [{
     key: "draw",
     value: function draw() {
-      root.drawImage(this.image, this.position.x, this.position.y, this.size.width, this.size.height);
+      root.fillStyle = "green";
+      root.fillRect(this.position.x, this.position.y, this.size.width, this.size.height);
+    }
+  }, {
+    key: "update",
+    value: function update() {
+      this.draw();
+      this.replace();
+      this.position.x -= 3;
+    }
+  }, {
+    key: "replace",
+    value: function replace() {
+      if (this.position.x + this.size.width < 0) {
+        this.position.x = 1000;
+      }
     }
   }]);
 
-  return GenericObject;
+  return Pipe;
 }();
 
 ;
+var bird = new Bird(); //create a bird
+//create pipes
 
-function createImage(imageScr) {
-  var image = new Image();
-  image.src = imageScr;
-  return image;
-}
-
-var hero = new Hero();
-var platforms = [];
-var genericObject = [];
 var keys = {
-  left: {
-    pressed: false
-  },
-  right: {
-    pressed: false
-  },
-  jump: {
+  space: {
     pressed: false
   }
-};
-var scrollOffset = 0;
+}; //pressedSpaceOrNot
 
-function init() {
-  hero = new Hero();
-  platforms = [new Platform({
-    x: -2,
-    y: 530,
-    width: 500,
-    height: 60,
-    image: createImage(_img_platform_png__WEBPACK_IMPORTED_MODULE_0__["default"])
-  }), new Platform({
-    x: 498,
-    y: 530,
-    width: 500,
-    height: 60,
-    image: createImage(_img_platform_png__WEBPACK_IMPORTED_MODULE_0__["default"])
-  }), new Platform({
-    x: 200 * 4.5,
-    y: 530,
-    width: 500,
-    height: 60,
-    image: createImage(_img_platform_png__WEBPACK_IMPORTED_MODULE_0__["default"])
-  }), new Platform({
-    x: 200 * 8,
-    y: 530,
-    width: 500,
-    height: 60,
-    image: createImage(_img_platform_png__WEBPACK_IMPORTED_MODULE_0__["default"])
-  }), new Platform({
-    x: 200 * 9,
-    y: 530,
-    width: 500,
-    height: 60,
-    image: createImage(_img_platform_png__WEBPACK_IMPORTED_MODULE_0__["default"])
-  }), new Platform({
-    x: 200 * 12,
-    y: 400,
-    width: 500,
-    height: 60,
-    image: createImage(_img_platform_png__WEBPACK_IMPORTED_MODULE_0__["default"])
-  }), new Platform({
-    x: 200 * 14,
-    y: 300,
-    width: 200,
-    height: 60,
-    image: createImage(_img_platform_png__WEBPACK_IMPORTED_MODULE_0__["default"])
-  }), new Platform({
-    x: 200 * 16,
-    y: 300,
-    width: 200,
-    height: 60,
-    image: createImage(_img_platform_png__WEBPACK_IMPORTED_MODULE_0__["default"])
-  }), new Platform({
-    x: 200 * 18,
-    y: 300,
-    width: 60,
-    height: 60,
-    image: createImage(_img_platform_png__WEBPACK_IMPORTED_MODULE_0__["default"])
-  }), new Platform({
-    x: 200 * 19,
-    y: 300,
-    width: 100,
-    height: 60,
-    image: createImage(_img_platform_png__WEBPACK_IMPORTED_MODULE_0__["default"])
-  }), new Platform({
-    x: 200 * 20,
-    y: 500,
-    width: 100,
-    height: 60,
-    image: createImage(_img_platform_png__WEBPACK_IMPORTED_MODULE_0__["default"])
-  })];
-  genericObject = [new GenericObject({
-    x: 200,
-    y: 240,
-    image: createImage(_img_tree_png__WEBPACK_IMPORTED_MODULE_2__["default"])
-  }), new GenericObject({
-    x: 200 * 2,
-    changePerSent: 1.1,
-    y: 280,
-    image: createImage(_img_tree_png__WEBPACK_IMPORTED_MODULE_2__["default"])
-  }), new GenericObject({
-    x: 200 * 3.5,
-    y: 240,
-    image: createImage(_img_tree_png__WEBPACK_IMPORTED_MODULE_2__["default"])
-  }), new GenericObject({
-    changePerSent: 1.1,
-    x: 200 * 6.73,
-    y: 280,
-    image: createImage(_img_tree_png__WEBPACK_IMPORTED_MODULE_2__["default"])
-  }), new GenericObject({
-    changePerSent: 1.1,
-    x: 200 * 12,
-    y: 310,
-    image: createImage(_img_tree_png__WEBPACK_IMPORTED_MODULE_2__["default"])
-  }), new GenericObject({
-    changePerSent: 0.8,
-    x: 200 * 10,
-    y: 210,
-    image: createImage(_img_tree_png__WEBPACK_IMPORTED_MODULE_2__["default"])
-  })];
-  scrollOffset = 0;
+function createPairOfPipes() {
+  var pipes = [];
+  var randomY = Math.floor(Math.random() * (-120 - -600 + 1) + -600);
+
+  for (var i = 0; i < 2; i++) {
+    pipes[i] = new Pipe(game.width + 200, randomY + i * (700 + 100));
+  }
+
+  return pipes;
 }
 
-;
+var pairPipers = createPairOfPipes();
+console.log(pairPipers);
 
 function animation() {
   requestAnimationFrame(animation);
-  root.drawImage(createImage(_img_background0_png__WEBPACK_IMPORTED_MODULE_1__["default"]), -1, -1, game.width, game.height);
-  genericObject.forEach(function (genericObj) {
-    genericObj.draw();
+  root.fillStyle = "#296389";
+  root.fillRect(0, 0, game.width, game.height);
+  pairPipers.forEach(function (pipe) {
+    pipe.update();
   });
-  platforms.forEach(function (platform) {
-    platform.draw();
-  });
-  hero.update();
-
-  if (keys.left.pressed === true && hero.position.x > 100 || keys.left.pressed && scrollOffset === 0 && hero.position.x > 0) {
-    hero.velocity.x = -hero.speed;
-  } else if (keys.right.pressed === true && hero.position.x < 400) {
-    hero.velocity.x = hero.speed;
-  } else {
-    hero.velocity.x = 0;
-
-    if (keys.left.pressed && scrollOffset > 0) {
-      platforms.forEach(function (platform) {
-        platform.position.x += hero.speed;
-      });
-      genericObject.forEach(function (genericObj) {
-        genericObj.position.x += hero.speed * 0.66;
-      });
-      scrollOffset -= hero.speed;
-    } else if (keys.right.pressed) {
-      platforms.forEach(function (platform) {
-        platform.position.x -= hero.speed;
-      });
-      genericObject.forEach(function (genericObj) {
-        genericObj.position.x -= hero.speed * 0.66;
-      });
-      scrollOffset += hero.speed;
-    }
-  } //platform colition ;)
-
-
-  platforms.forEach(function (platform) {
-    if (hero.position.y + hero.size.height <= platform.position.y && hero.position.y + hero.size.height + hero.velocity.y >= platform.position.y && hero.position.x + hero.size.width >= platform.position.x && hero.position.x <= platform.position.x + platform.size.width) {
-      hero.velocity.y = 0;
-    }
-  }); //jump
-
-  if (keys.jump.pressed) {
-    hero.jump.count++;
-    console.log(hero.jump.count);
-    hero.jump.height = 2 * hero.jump.length - gravite * hero.jump.count;
-
-    if (hero.jump.count > hero.jump.length) {
-      keys.jump.pressed = false;
-      hero.jump.count = 0;
-      hero.jump.height = 0;
-    }
-  }
-
-  score.innerHTML = (scrollOffset / 50).toFixed(0); //You win
-
-  if (scrollOffset > 3630) {
-    console.log("you win");
-    score.innerHTML = "You won";
-  } //you lose
-
-
-  if (game.height < hero.position.y) {
-    init();
-  }
+  bird.update();
 }
 
-init();
 animation();
-document.addEventListener('keydown', function (_ref3) {
-  var keyCode = _ref3.keyCode;
+document.addEventListener('keydown', function (_ref) {
+  var keyCode = _ref.keyCode;
 
   switch (keyCode) {
-    case 37:
-    case 65:
-      console.log("left");
-      keys.left.pressed = true;
-      hero.currentSprite = hero.sprite.run.left;
-      break;
-
-    case 38:
-    case 87:
-      console.log("up");
-      keys.jump.pressed = true;
-      break;
-
-    case 39:
-    case 68:
-      console.log("right");
-      keys.right.pressed = true;
-      hero.currentSprite = hero.sprite.run.right;
-      break;
-
-    case 40:
-    case 83:
-      console.log("down");
-      break;
-  }
-});
-document.addEventListener('keyup', function (_ref4) {
-  var keyCode = _ref4.keyCode;
-  console.log(keyCode);
-
-  switch (keyCode) {
-    case 37:
-    case 65:
-      console.log("left");
-      keys.left.pressed = false;
-      hero.currentSprite = hero.sprite.stand.left;
-      break;
-
-    case 38:
-    case 87:
-      console.log("up");
-      break;
-
-    case 39:
-    case 68:
-      console.log("right");
-      keys.right.pressed = false;
-      hero.currentSprite = hero.sprite.stand.right;
-      break;
-
-    case 40:
-    case 83:
-      console.log("down");
+    case 32:
+      console.log("space");
+      keys.space.pressed = true;
       break;
   }
 });
