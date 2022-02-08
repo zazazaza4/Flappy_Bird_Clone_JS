@@ -86,18 +86,35 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/img/Sprites.png":
+/*!*****************************!*\
+  !*** ./src/img/Sprites.png ***!
+  \*****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = (__webpack_require__.p + "c37f433b9b3b4cdccc36b809168e23ae.png");
+
+/***/ }),
+
 /***/ "./src/js/canvas.js":
 /*!**************************!*\
   !*** ./src/js/canvas.js ***!
   \**************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _img_Sprites_png__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../img/Sprites.png */ "./src/img/Sprites.png");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
 
 var game = document.querySelector(".game__area");
 var root = game.getContext("2d");
@@ -105,7 +122,7 @@ game.width = 600; //window.innerWidth
 
 game.height = window.innerHeight - 10; //window.innerHeight
 
-var gravity = 1.5;
+var gravity = 1;
 
 var Bird = /*#__PURE__*/function () {
   function Bird() {
@@ -116,7 +133,8 @@ var Bird = /*#__PURE__*/function () {
       y: game.height / 2
     };
     this.size = {
-      radius: 12
+      width: 34,
+      height: 24
     };
     this.velocity = {
       x: 0,
@@ -132,11 +150,7 @@ var Bird = /*#__PURE__*/function () {
   _createClass(Bird, [{
     key: "draw",
     value: function draw() {
-      root.beginPath();
-      root.arc(this.position.x, this.position.y, this.size.radius, 0, Math.PI * 2, false);
-      root.fillStyle = 'yellow';
-      root.fill();
-      root.closePath();
+      root.drawImage(createImage(_img_Sprites_png__WEBPACK_IMPORTED_MODULE_0__["default"]), 3, 490, 17, 13, this.position.x, this.position.y, this.size.width, this.size.height);
     }
   }, {
     key: "update",
@@ -149,11 +163,11 @@ var Bird = /*#__PURE__*/function () {
   }, {
     key: "collisionWall",
     value: function collisionWall() {
-      if (this.position.y + this.size.radius > game.height) {
-        this.position.y = game.height - this.size.radius;
+      if (this.position.y + this.size.height > game.height) {
+        this.position.y = game.height - this.size.height;
       }
 
-      if (this.position.y - this.size.radius < 0) {
+      if (this.position.y - this.size.height < 0) {
         this.position.y = game.height / 2;
       }
     }
@@ -227,23 +241,37 @@ var keys = {
   space: {
     pressed: false
   }
-};
+}; // function for creating image
+
+function createImage(imageScr) {
+  var image = new Image();
+  image.src = imageScr;
+  return image;
+} // Pairs of pipes replace if their position + their width < than 0 
+
 
 function replacePairOfPipes(arrayPairOfPipes) {
   var currentRandom = Math.floor(Math.random() * (-120 - -600 + 1) + -600);
 
   if (arrayPairOfPipes[0].position.x + arrayPairOfPipes[0].size.width < 0) {
-    console.log(arrayPairOfPipes.length);
-
     for (var i = 0; i < arrayPairOfPipes.length; i++) {
       arrayPairOfPipes[i].position.x = 2000;
       arrayPairOfPipes[i].position.y = currentRandom + i * 800;
     }
   }
-}
+} // Collision between Bird and Pipes
+
+
+function ditectionCollisionBirdAndPipes(pipeCollision) {
+  if (bird.position.x + bird.size.width >= pipeCollision.position.x && bird.position.x <= pipeCollision.size.width + pipeCollision.position.x && bird.position.y + bird.size.height >= pipeCollision.position.y && bird.position.y <= pipeCollision.size.height + pipeCollision.position.y) {
+    return true;
+  } else {
+    return false;
+  }
+} // function for creating five pairs of pipes 
+
 
 function createPairOfPipes() {
-  //function for creating five pairs of pipes 
   var pipes = [[], [], [], [], []];
 
   for (var j = 0; j < 5; j++) {
@@ -257,18 +285,25 @@ function createPairOfPipes() {
   return pipes;
 }
 
-var pairPipers = createPairOfPipes();
+var pairPipes = createPairOfPipes(); //main function 
 
 function animation() {
   requestAnimationFrame(animation);
-  root.fillStyle = "#296389";
-  root.fillRect(0, 0, game.width, game.height);
+  root.drawImage(createImage(_img_Sprites_png__WEBPACK_IMPORTED_MODULE_0__["default"]), 0, 0, 144, 256, 0, 0, game.width, game.height);
 
   for (var i = 0; i < 5; i++) {
-    pairPipers[i].forEach(function (pipe) {
+    pairPipes[i].forEach(function (pipe) {
       pipe.update();
     });
-    replacePairOfPipes(pairPipers[i]);
+    replacePairOfPipes(pairPipes[i]);
+  }
+
+  for (var _i = 0; _i < 5; _i++) {
+    for (var j = 0; j < 2; j++) {
+      if (ditectionCollisionBirdAndPipes(pairPipes[_i][j])) {
+        console.log("hit");
+      }
+    }
   }
 
   bird.update();
