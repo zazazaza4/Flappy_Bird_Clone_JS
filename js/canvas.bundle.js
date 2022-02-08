@@ -150,7 +150,7 @@ var Bird = /*#__PURE__*/function () {
     key: "collisionWall",
     value: function collisionWall() {
       if (this.position.y + this.size.radius > game.height) {
-        this.position.y = game.height / 2;
+        this.position.y = game.height - this.size.radius;
       }
 
       if (this.position.y - this.size.radius < 0) {
@@ -179,7 +179,10 @@ var Bird = /*#__PURE__*/function () {
 ;
 
 var Pipe = /*#__PURE__*/function () {
-  function Pipe(x, y) {
+  function Pipe() {
+    var x = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+    var y = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
     _classCallCheck(this, Pipe);
 
     this.position = {
@@ -202,52 +205,72 @@ var Pipe = /*#__PURE__*/function () {
     key: "update",
     value: function update() {
       this.draw();
-      this.replace();
       this.position.x -= 3;
     }
   }, {
-    key: "replace",
-    value: function replace() {
-      if (this.position.x + this.size.width < 0) {
-        this.position.x = 1000;
-      }
+    key: "randomHeight",
+    value: function randomHeight() {
+      return Math.floor(Math.random() * (-120 - -600 + 1) + -600);
     }
   }]);
 
   return Pipe;
 }();
 
-;
-var bird = new Bird(); //create a bird
-//create pipes
+; //create bird
+
+var bird = new Bird(); //create pipe 
+
+var pipe = new Pipe(); // to check if a user pressed the space bar 
 
 var keys = {
   space: {
     pressed: false
   }
-}; //pressedSpaceOrNot
+};
+
+function replacePairOfPipes(arrayPairOfPipes) {
+  var currentRandom = Math.floor(Math.random() * (-120 - -600 + 1) + -600);
+
+  if (arrayPairOfPipes[0].position.x + arrayPairOfPipes[0].size.width < 0) {
+    console.log(arrayPairOfPipes.length);
+
+    for (var i = 0; i < arrayPairOfPipes.length; i++) {
+      arrayPairOfPipes[i].position.x = 2000;
+      arrayPairOfPipes[i].position.y = currentRandom + i * 800;
+    }
+  }
+}
 
 function createPairOfPipes() {
-  var pipes = [];
-  var randomY = Math.floor(Math.random() * (-120 - -600 + 1) + -600);
+  //function for creating five pairs of pipes 
+  var pipes = [[], [], [], [], []];
 
-  for (var i = 0; i < 2; i++) {
-    pipes[i] = new Pipe(game.width + 200, randomY + i * (700 + 100));
+  for (var j = 0; j < 5; j++) {
+    var randomY = Math.floor(Math.random() * (-120 - -600 + 1) + -600);
+
+    for (var i = 0; i < 2; i++) {
+      pipes[j][i] = new Pipe(game.width + (200 + j * 400), randomY + i * 800);
+    }
   }
 
   return pipes;
 }
 
 var pairPipers = createPairOfPipes();
-console.log(pairPipers);
 
 function animation() {
   requestAnimationFrame(animation);
   root.fillStyle = "#296389";
   root.fillRect(0, 0, game.width, game.height);
-  pairPipers.forEach(function (pipe) {
-    pipe.update();
-  });
+
+  for (var i = 0; i < 5; i++) {
+    pairPipers[i].forEach(function (pipe) {
+      pipe.update();
+    });
+    replacePairOfPipes(pairPipers[i]);
+  }
+
   bird.update();
 }
 
