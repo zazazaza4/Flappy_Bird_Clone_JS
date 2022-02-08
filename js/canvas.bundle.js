@@ -122,7 +122,7 @@ game.width = 600; //window.innerWidth
 
 game.height = window.innerHeight - 10; //window.innerHeight
 
-var gravity = 1;
+var gravity = 0.14;
 
 var Bird = /*#__PURE__*/function () {
   function Bird() {
@@ -142,7 +142,7 @@ var Bird = /*#__PURE__*/function () {
     };
     this.jump = {
       height: 0,
-      length: 7,
+      length: 4,
       count: 0
     };
   }
@@ -156,15 +156,16 @@ var Bird = /*#__PURE__*/function () {
     key: "update",
     value: function update() {
       this.draw();
-      this.position.y += Math.floor(this.velocity.y + gravity) - this.jump.height;
+      this.position.y += this.velocity.y - this.jump.height;
       this.jumpBird();
       this.collisionWall();
+      this.velocity.y += gravity;
     }
   }, {
     key: "collisionWall",
     value: function collisionWall() {
-      if (this.position.y + this.size.height > game.height) {
-        this.position.y = game.height - this.size.height;
+      if (this.position.y + this.size.height + platform.size.height > game.height) {
+        this.position.y = game.height - this.size.height - platform.size.height;
       }
 
       if (this.position.y - this.size.height < 0) {
@@ -176,11 +177,12 @@ var Bird = /*#__PURE__*/function () {
     value: function jumpBird() {
       if (keys.space.pressed) {
         this.jump.count++;
-        this.jump.height = 2 * this.jump.length * Math.sin(Math.PI * this.jump.count / this.jump.length);
+        this.jump.height = 4 * this.jump.length * Math.sin(Math.PI * this.jump.count / this.jump.length);
       }
 
       if (this.jump.count > this.jump.length) {
         this.jump.count = 0;
+        this.velocity.y = 0;
         this.jump.height = 0;
         keys.space.pressed = false;
       }
@@ -196,6 +198,7 @@ var Pipe = /*#__PURE__*/function () {
   function Pipe() {
     var x = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
     var y = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+    var side = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
     _classCallCheck(this, Pipe);
 
@@ -207,13 +210,25 @@ var Pipe = /*#__PURE__*/function () {
       width: 60,
       height: 700
     };
+    this.imageSideTop = {
+      x: 56
+    };
+    this.imageSideBottom = {
+      x: 84
+    };
+    this.side = side;
+
+    if (this.side) {
+      this.imageSide = this.imageSideTop;
+    } else {
+      this.imageSide = this.imageSideBottom;
+    }
   }
 
   _createClass(Pipe, [{
     key: "draw",
     value: function draw() {
-      root.fillStyle = "green";
-      root.fillRect(this.position.x, this.position.y, this.size.width, this.size.height);
+      root.drawImage(createImage(_img_Sprites_png__WEBPACK_IMPORTED_MODULE_0__["default"]), this.imageSide.x, 323, 26, 160, this.position.x, this.position.y, this.size.width, this.size.height);
     }
   }, {
     key: "update",
@@ -231,11 +246,63 @@ var Pipe = /*#__PURE__*/function () {
   return Pipe;
 }();
 
-; //create bird
+;
+
+var Platform = /*#__PURE__*/function () {
+  function Platform() {
+    _classCallCheck(this, Platform);
+
+    this.size = {
+      width: game.width,
+      height: 75
+    };
+    this.position = {
+      x: 0,
+      y: game.height - this.size.height
+    };
+  }
+
+  _createClass(Platform, [{
+    key: "draw",
+    value: function draw() {
+      root.drawImage(createImage(_img_Sprites_png__WEBPACK_IMPORTED_MODULE_0__["default"]), 292, 0, 152, 56, this.position.x, this.position.y, this.size.width, this.size.height);
+    }
+  }]);
+
+  return Platform;
+}();
+
+var Score = /*#__PURE__*/function () {
+  function Score() {
+    var scoreNumber = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+
+    _classCallCheck(this, Score);
+
+    this.position = {
+      x: 10,
+      y: 50
+    };
+    this.setup = '50px serif';
+    this.scoreNumber = scoreNumber;
+  }
+
+  _createClass(Score, [{
+    key: "draw",
+    value: function draw() {
+      root.font = this.setup;
+      root.fillText(this.scoreNumber, this.position.x, this.position.y);
+    }
+  }]);
+
+  return Score;
+}(); //create bird
+
 
 var bird = new Bird(); //create pipe 
 
-var pipe = new Pipe(); // to check if a user pressed the space bar 
+var pipe = new Pipe();
+var score = new Score();
+var platform = new Platform(); // to check if a user pressed the space bar 
 
 var keys = {
   space: {
@@ -273,13 +340,13 @@ function ditectionCollisionBirdAndPipes(pipeCollision) {
 
 function createPairOfPipes() {
   var pipes = [[], [], [], [], []];
+  var min = -630,
+      max = -200;
 
   for (var j = 0; j < 5; j++) {
-    var randomY = Math.floor(Math.random() * (-120 - -600 + 1) + -600);
-
-    for (var i = 0; i < 2; i++) {
-      pipes[j][i] = new Pipe(game.width + (200 + j * 400), randomY + i * 800);
-    }
+    var randomY = Math.floor(Math.random() * (max - min + 1) + min);
+    pipes[j][0] = new Pipe(game.width + (200 + j * 400), randomY);
+    pipes[j][1] = new Pipe(game.width + (200 + j * 400), randomY + 800, false);
   }
 
   return pipes;
@@ -306,6 +373,8 @@ function animation() {
     }
   }
 
+  platform.draw();
+  score.draw();
   bird.update();
 }
 
