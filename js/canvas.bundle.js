@@ -120,7 +120,7 @@ var game = document.querySelector(".game__area");
 var root = game.getContext("2d");
 game.width = 600; //window.innerWidth
 
-game.height = window.innerHeight - 10; //window.innerHeight
+game.height = 745; //window.innerHeight
 
 var gravity = 0.14;
 
