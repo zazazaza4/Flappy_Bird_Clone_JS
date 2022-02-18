@@ -118,11 +118,17 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 var game = document.querySelector(".game__area");
 var root = game.getContext("2d");
+var menuButtonParent = document.querySelector(".menu__buttons"),
+    menuBody = document.querySelector(".menu"),
+    scoreCurrentEl = document.querySelector('#score__current'),
+    scoreBestEl = document.querySelector('#score__best');
 game.width = 600; //window.innerWidth
 
 game.height = 745; //window.innerHeight
 
 var gravity = 0.14;
+var bestScore = 0;
+var startGame = false;
 
 var Bird = /*#__PURE__*/function () {
   function Bird() {
@@ -137,7 +143,7 @@ var Bird = /*#__PURE__*/function () {
       y: this.position.y
     };
     this.size = {
-      width: 34,
+      width: 33,
       height: 24
     };
     this.velocity = {
@@ -149,6 +155,8 @@ var Bird = /*#__PURE__*/function () {
       length: 10,
       count: 0
     };
+    this.angle = 0;
+    this.radius = 12;
     this.frame = {
       current: 0,
       slow: 0
@@ -158,7 +166,11 @@ var Bird = /*#__PURE__*/function () {
   _createClass(Bird, [{
     key: "draw",
     value: function draw() {
-      root.drawImage(createImage(_img_Sprites_png__WEBPACK_IMPORTED_MODULE_0__["default"]), 3 + 28 * this.frame.current, 490, 17, 13, this.position.x, this.position.y, this.size.width, this.size.height);
+      root.save();
+      root.translate(this.position.x, this.position.y);
+      root.rotate(this.angle * Math.PI / 180);
+      root.drawImage(createImage(_img_Sprites_png__WEBPACK_IMPORTED_MODULE_0__["default"]), 3 + 28 * this.frame.current, 490, 17, 13, -this.size.width / 2, -this.size.height / 2, this.size.width, this.size.height);
+      root.restore();
     }
   }, {
     key: "update",
@@ -171,21 +183,29 @@ var Bird = /*#__PURE__*/function () {
         this.frame.slow = 0;
       }
 
+      if (startGame) {
+        this.angle += 4;
+        this.position.y += this.velocity.y - this.jump.height;
+        this.velocity.y += gravity;
+      }
+
+      if (this.angle > 90) {
+        this.angle = 90;
+      }
+
       this.draw();
-      this.position.y += this.velocity.y - this.jump.height;
       this.jumpBird();
       this.collisionWall();
-      this.velocity.y += gravity;
     }
   }, {
     key: "collisionWall",
     value: function collisionWall() {
-      if (this.position.y + this.size.height + platform.size.height > game.height) {
-        cancelAnimationFrame(animationId);
+      if (this.position.y + platform.size.height > game.height) {
+        endGame();
       }
 
-      if (this.position.y - this.size.height < 0) {
-        cancelAnimationFrame(animationId);
+      if (this.position.y < 0) {
+        endGame();
       }
     }
   }, {
@@ -193,6 +213,7 @@ var Bird = /*#__PURE__*/function () {
     value: function jumpBird() {
       if (keys.space.pressed) {
         this.jump.count++;
+        this.angle = -30;
         this.jump.height = this.jump.length * Math.sin(Math.PI * this.jump.count / this.jump.length);
       }
 
@@ -298,14 +319,16 @@ var Score = /*#__PURE__*/function () {
       x: 10,
       y: 50
     };
-    this.setup = '50px serif';
+    this.setup = 'bold 50px Montserrat';
   }
 
   _createClass(Score, [{
     key: "draw",
     value: function draw() {
       var scoreNumber = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+      root.fillStyle = '#ddd';
       root.font = this.setup;
+      root.strokeText(scoreNumber, this.position.x, this.position.y);
       root.fillText(scoreNumber, this.position.x, this.position.y);
     }
   }]);
@@ -325,7 +348,17 @@ var keys = {
   space: {
     pressed: false
   }
-}; // function for creating image
+};
+
+function init() {
+  bird = new Bird();
+  pipesPair = [];
+  scoreNumber = 0;
+  score = new Score();
+  platform = new Platform();
+  startGame = false;
+} // function for creating image
+
 
 function createImage(imageScr) {
   var image = new Image();
@@ -335,11 +368,31 @@ function createImage(imageScr) {
 
 
 function ditectionCollisionBirdAndPipes(pipeCollision) {
-  if (bird.position.x + bird.size.width >= pipeCollision.position.x && bird.position.x <= pipeCollision.size.width + pipeCollision.position.x && bird.position.y + bird.size.height >= pipeCollision.position.y && bird.position.y <= pipeCollision.size.height + pipeCollision.position.y) {
-    return true;
-  } else {
-    return false;
+  var test = {
+    x: bird.position.x,
+    y: bird.position.y
+  }; // which edge is closest?
+
+  if (bird.position.x < pipeCollision.position.x) {
+    test.x = pipeCollision.position.x;
+  } else if (bird.position.x > pipeCollision.position.x + pipeCollision.size.width) {
+    test.x = pipeCollision.position.x + pipeCollision.size.width;
   }
+
+  if (bird.position.y < pipeCollision.position.y) {
+    test.y = pipeCollision.position.y;
+  } else if (bird.position.y > pipeCollision.position.y + pipeCollision.size.height) {
+    test.y = pipeCollision.position.y + pipeCollision.size.height;
+  } // get distance from closest edges
+
+
+  var dist = {
+    y: bird.position.y - test.y,
+    x: bird.position.x - test.x
+  };
+  var distance = Math.sqrt(Math.pow(dist.x, 2) + Math.pow(dist.y, 2));
+  if (distance <= bird.radius) return true;
+  return false;
 } // function for creating pairs of pipes 
 
 
@@ -354,21 +407,36 @@ function createPairOfPipes() {
 }
 
 setInterval(function () {
-  createPairOfPipes();
-}, 2500); //main function
+  if (startGame) {
+    createPairOfPipes();
+  }
+}, 2500); // end game
+
+function endGame() {
+  cancelAnimationFrame(animationId);
+  menuBody.style.display = "block";
+  scoreCurrentEl.innerHTML = scoreNumber;
+
+  if (bestScore < scoreNumber) {
+    bestScore = scoreNumber;
+    scoreBestEl.innerHTML = bestScore;
+  }
+
+  init();
+} //main function
+
 
 var animationId;
 
 function animation() {
   animationId = requestAnimationFrame(animation);
   root.drawImage(createImage(_img_Sprites_png__WEBPACK_IMPORTED_MODULE_0__["default"]), 0, 0, 144, 256, 0, 0, game.width, game.height);
-  platform.draw();
   pipesPair.forEach(function (pipePair) {
     pipePair.forEach(function (pipe) {
       pipe.update();
 
       if (ditectionCollisionBirdAndPipes(pipe)) {
-        cancelAnimationFrame(animationId);
+        endGame();
       }
     });
 
@@ -381,18 +449,25 @@ function animation() {
       scoreNumber++;
     }
   });
+  platform.draw();
   bird.collisionWall();
   score.draw(scoreNumber);
   root.save();
   bird.update();
 }
 
-animation();
+menuButtonParent.addEventListener('click', function (event) {
+  if (event.target && event.target.textContent == 'START') {
+    menuBody.style.display = "none";
+    animation();
+  }
+});
 document.addEventListener('keydown', function (_ref) {
   var keyCode = _ref.keyCode;
 
   switch (keyCode) {
     case 32:
+      startGame = true;
       keys.space.pressed = true;
       break;
   }

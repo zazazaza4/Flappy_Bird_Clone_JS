@@ -3,14 +3,43 @@
   <head>
     <meta charset="UTF-8" />
     <title>Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
     <style>
       html,body {
         margin: 0;
         padding: 0;
         display: flex;
         justify-content: center;
+        font-family: 'Montserrat', sans-serif;
         align-items: center;
         height: 100%;
+      }
+      .menu {
+        position: absolute;
+        padding: 10px;
+        border-radius: 12px;
+        font-size: 20px;
+        display: block;
+        color: #FFF5EE;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        background: #32CD32;
+      }
+      .menu__buttons button {
+        color: white;
+        background: #CD853F;
+      }
+      .menu__buttons button:hover{
+        background:#F4A460;
+      }
+      .score__body{
+        text-align: center;
+      }
+      .score__number{
+        margin-top: 1px;
       }
     </style>
   <link rel="icon" href="favicon.ico"></head>
@@ -18,17 +47,13 @@
     <div class="menu">
       <div class="score__body">
         <div class="score__text">Score</div>
-        <h2 class="score__number">0</h2>
+        <h2 class="score__number" id="score__current">0</h2>
         <div class="score__text">Best</div>
-        <h2 class="score__number">0</h2>
+        <h2 class="score__number" id="score__best">0</h2>
       </div>
       <div class="menu__buttons">
-        <div class="menu__restart">
-          RESTART
-        </div>
-        <div class="menu__share">
-          SHARE
-        </div>
+        <button class="menu__start">START</button> 
+       <a href="https://github.com/zazazaza4"><button class="menu__share">SHARE</button></a>
       </div>
     </div>
     <canvas id="game__canvas" class="game__area"></canvas>
