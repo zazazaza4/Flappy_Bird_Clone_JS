@@ -472,6 +472,10 @@ document.addEventListener('keydown', function (_ref) {
       break;
   }
 });
+document.addEventListener('click', function () {
+  startGame = true;
+  keys.space.pressed = true;
+});
 
 /***/ })
 
